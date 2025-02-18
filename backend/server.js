@@ -33,6 +33,14 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
+const openaiConfig = require('./config/openai.js');
+
+// Add this to your existing server.js to verify the OpenAI configuration is loaded
+console.log('OpenAI Configuration loaded:', {
+    hasApiKey: !!openaiConfig.apiKey,
+    model: openaiConfig.defaultModel
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Frontend available at http://localhost:${PORT}`);
