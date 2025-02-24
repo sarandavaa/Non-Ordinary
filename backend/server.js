@@ -1,22 +1,13 @@
 const dotenv = require('dotenv');
 const path = require('path');
-
-// Log the current directory
-console.log('Current directory:', process.cwd());
-
-// Configure dotenv with explicit path
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
-
-// Log the environment variable
-console.log('API Key exists:', !!process.env.OPENAI_API_KEY);
-console.log('API Key length:', process.env.OPENAI_API_KEY?.length);
+dotenv.config();
 
 const express = require('express');
 const cors = require('cors');
 const apiRoutes = require('./routes/api');
 
 const app = express();
-const PORT = process.env.PORT || 9090;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -28,20 +19,17 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // API routes
 app.use('/api', apiRoutes);
 
-// Serve index.html for all routes
+// Serve index.html for all routes (important for Vercel)
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-const openaiConfig = require('./config/openai.js');
+// For Vercel, export the app
+module.exports = app;
 
-// Add this to your existing server.js to verify the OpenAI configuration is loaded
-console.log('OpenAI Configuration loaded:', {
-    hasApiKey: !!openaiConfig.apiKey,
-    model: openaiConfig.defaultModel
-});
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Frontend available at http://localhost:${PORT}`);
-}); 
+// Only listen if not on Vercel
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+} 
