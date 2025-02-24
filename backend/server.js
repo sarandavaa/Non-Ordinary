@@ -5,9 +5,10 @@ dotenv.config();
 const express = require('express');
 const cors = require('cors');
 const apiRoutes = require('./routes/api');
+const Sentry = require("@sentry/node");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 // Middleware
 app.use(cors());
@@ -32,4 +33,9 @@ if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
-} 
+}
+
+Sentry.init({
+  dsn: "your-sentry-dsn",
+  tracesSampleRate: 1.0,
+}); 
